@@ -22,6 +22,8 @@ urlcolor: blue
 library(captioner)
 library(dplyr)
 library(magrittr)
+library(knitr)
+library(kableExtra)
 
 figure_nums <- captioner(prefix = "Figure")
 table_nums <- captioner(prefix = "Table")
@@ -195,7 +197,7 @@ The variable `$multirace` is labelled using attributes.
 var.lab = "Whether multiple race/ethnicity variables were marked"
 val.lab = c("(0) Single race/ethnicity" = 0, 
             "(1) Multiple races/ethnicities" = 1,
-            "(9) Unknown" = 9)
+            "(9) Unknown or mMissing" = 9)
 
 #Labeling variable
 attributes(d.adh$multirace)$label = var.lab
@@ -205,7 +207,26 @@ attributes(d.adh$multirace)$labels = val.lab
 ## Question 1.5
 __Include below a contingency table of the multirace variable. Make sure that the values are labelled so the table is readable, and also include any missing values.__
 
-### Creating 
+### Answer 1.5
+
+To create a contingency table that utilizes value labels we will subset the data to be tabulated and then factor them according to their value labels.
+
+```{r, warning = FALSE, message = FALSE}
+#Subseting data
+df = d.adh %>% select(multirace)
+
+#Factoring multirace
+df$multirace = factor(df$multirace,
+                      ordered = TRUE,
+                      labels = attributes(attributes(df$multirace)$labels)$names)
+
+#Generating contingency table
+df %>%
+  group_by(multirace) %>%
+  summarise(n = n()) %>%
+  kable() %>%
+  kable_styling(full_width = FALSE, position = "left")
+```
 
 # 
 __Review part B of each of the answers (i.e., `H1KQ1B .. H1KQ10B`) to the Knowledge Quiz (Section 19 of the Add Health questionnaire, documented in `INH19PUB.PDF`). The 10 questions each ask: â€œHow confident are you that your answer is correct?â€__
