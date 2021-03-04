@@ -20,6 +20,8 @@ urlcolor: blue
 
 ```{r}
 library(captioner)
+library(dplyr)
+library(magrittr)
 
 figure_nums <- captioner(prefix = "Figure")
 table_nums <- captioner(prefix = "Table")
@@ -113,6 +115,7 @@ structure(
 
 First, the dataframe below is constructed
 ```{r, echo = TRUE}
+#Structuring data frame
 df = 
   structure(
     list(
@@ -126,6 +129,15 @@ df =
     class = "data.frame", 
     row.names = c(NA, -10L)
 )
+
+#Recoding 6's and 8's as NAs (e.g., refusals and unknowns)
+df[df == 6 | df == 8] = NA
+
+#Recalculating multrace as the sum of other race variables
+df$multirace = rowSums(df, na.rm = TRUE)
+
+#Printing data frame
+print.data.frame(df, row.names = FALSE)
 ```
 
 
